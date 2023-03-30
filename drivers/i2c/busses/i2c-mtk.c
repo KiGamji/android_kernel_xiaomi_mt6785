@@ -608,13 +608,14 @@ static int mt_i2c_do_transfer(struct mt_i2c *i2c)
 
 	i2c->trans_stop = false;
 	i2c->irq_stat = 0;
-	if ((i2c->total_len > 8 || i2c->msg_aux_len > 8))
+	if ((i2c->total_len > 8 || i2c->msg_aux_len > 8)) {
 		if (!i2c->fifo_only)
 			isDMA = true;
 		else {
 			dev_dbg(i2c->dev, "i2c does not support dma mode\n");
 			return -EINVAL;
 		}
+	}
 
 	if (i2c->ext_data.isEnable && i2c->ext_data.timing)
 		speed_hz = i2c->ext_data.timing;
@@ -1755,11 +1756,6 @@ err_clk_set_main:
 }
 
 
-static struct syscore_ops mtk_i2c_syscore_ops = {
-	.resume = mt_i2c_pll_resume,
-	.suspend = mt_i2c_pll_suspend,
-};
-
 #ifdef CONFIG_PM_SLEEP
 
 static int mt_i2c_suspend_noirq(struct device *dev)
@@ -1864,8 +1860,6 @@ static s32 __init mt_i2c_init(void)
 		pr_debug("Mapp dma regs successfully.\n");
 	if (!mt_i2c_parse_comp_data())
 		pr_debug("Get compatible data from dts successfully.\n");
-
-	/* register_syscore_ops(&mtk_i2c_syscore_ops); */
 
 	pr_debug("%s: driver as platform device\n", __func__);
 	return platform_driver_register(&mt_i2c_driver);

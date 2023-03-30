@@ -92,6 +92,8 @@
 #define LZ4_STREAMDECODESIZE		 (LZ4_STREAMDECODESIZE_U64 * \
 	sizeof(unsigned long long))
 
+#pragma clang diagnostic ignored "-Wunused-function"
+
 /*
  * LZ4_stream_t - information structure to track an LZ4 stream.
  */
